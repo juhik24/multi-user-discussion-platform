@@ -25,7 +25,7 @@ export default function Login() {
     try {
       const res = await API.post("/auth/login", form);
       localStorage.setItem("token", res.data.token);
-      navigate("/");
+      window.location.href = "/";
     } catch (err) {
       setErrors({ api: err.response?.data?.msg || "Login failed" });
     }
