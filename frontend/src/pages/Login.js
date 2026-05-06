@@ -24,14 +24,14 @@ export default function Login() {
     if (Object.keys(eObj).length) return;
 
     try {
-      setLoading(true);
+      //setLoading(true);
       const res = await API.post("/auth/login", form);
       localStorage.setItem("token", res.data.token);
       navigate("/");
     } catch (err) {
       setErrors({ api: err.response?.data?.msg || "Login failed" });
     } finally {
-      setLoading(false);
+      //setLoading(false);
     }
   };
 
