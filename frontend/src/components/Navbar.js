@@ -1,30 +1,46 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const token = localStorage.getItem("token");
 
-  const handleLogout = () => {
+  const logout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
   return (
     <div className="navbar">
-  <div className="nav-left">
-    <Link to="/">Home</Link>
-    {token && <Link to="/create">Create</Link>}
-  </div>
 
-  <div className="nav-right">
-    {!token ? (
-      <>
-        <Link to="/login">Login</Link>
-        <Link to="/signup">Signup</Link>
-      </>
-    ) : (
-      <button onClick={handleLogout}>Logout</button>
-    )}
-  </div>
-</div>
+      <div className="nav-left">
+        {token && <Link to="/">Home</Link>}
+      </div>
+
+      <div className="nav-right">
+
+        {token ? (
+          <>
+            <Link to="/create">Create Post</Link>
+
+            <button onClick={logout}>
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            {location.pathname !== "/login" && (
+              <Link to="/login">Login</Link>
+            )}
+
+            {location.pathname !== "/signup" && (
+              <Link to="/signup">Signup</Link>
+            )}
+          </>
+        )}
+
+      </div>
+    </div>
   );
 }
