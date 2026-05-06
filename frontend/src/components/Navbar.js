@@ -1,7 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
 export default function Navbar() {
-  const navigate = useNavigate();
   const location = useLocation();
 
   const token = localStorage.getItem("token");
