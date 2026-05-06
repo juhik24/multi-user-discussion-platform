@@ -57,29 +57,33 @@ https://multi-user-discussion-platform.onrender.com
 # **📸 Screenshots**
 
 ## **Login Page**
-(Add Screenshot Here)
+
+![Login Page](./frontend/screenshots/login.png)
 
 ---
 
 ## **Signup Page**
-(Add Screenshot Here)
+
+![Signup Page](./frontend/screenshots/signup.png)
 
 ---
 
 ## **Feed Page**
-(Add Screenshot Here)
+
+![Feed Page](./frontend/screenshots/feed.png)
 
 ---
 
 ## **Post Details Page**
-(Add Screenshot Here)
+
+![Post Details](./frontend/screenshots/post-details.png)
+
 
 ---
 
 ## **Create Post Page**
-(Add Screenshot Here)
 
----
+![Create Post](./frontend/screenshots/create-post.png)
 
 
 # **⭐ If you found this project interesting, consider giving it a star!**
