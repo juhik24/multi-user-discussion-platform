@@ -19,7 +19,8 @@ export default function Feed() {
 
   useEffect(() => {
   fetchPosts();
-}, [search, tag]);
+  // eslint-disable-next-line
+}, []);
 
   const vote = async (id, type) => {
   try {
