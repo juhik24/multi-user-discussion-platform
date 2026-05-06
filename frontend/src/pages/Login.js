@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
-  //const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const validate = () => {
@@ -24,14 +24,14 @@ export default function Login() {
     if (Object.keys(eObj).length) return;
 
     try {
-      //setLoading(true);
+      setLoading(true);
       const res = await API.post("/auth/login", form);
       localStorage.setItem("token", res.data.token);
       navigate("/");
     } catch (err) {
       setErrors({ api: err.response?.data?.msg || "Login failed" });
     } finally {
-      //setLoading(false);
+      setLoading(false);
     }
   };
 
