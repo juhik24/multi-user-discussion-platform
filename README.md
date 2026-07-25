@@ -1,5 +1,9 @@
 # **Multi-User Discussion Platform**
 
+![React](https://img.shields.io/badge/React-Frontend-61DAFB)
+![Node](https://img.shields.io/badge/NodeJS-Backend-orange)
+![Mongo](https://img.shields.io/badge/MongoDB-Database-green)
+
 A full-stack discussion platform inspired by modern community forums where users can create posts, participate in discussions, vote on content, and interact through comments.
 
 Built using **React.js, Node.js, Express.js, MongoDB, and JWT Authentication** with full deployment on **Vercel** and **Render**.
@@ -8,11 +12,9 @@ Built using **React.js, Node.js, Express.js, MongoDB, and JWT Authentication** w
 
 # **🚀 Live Demo**
 
-### **Frontend**
+### **Try it here**
 https://multi-user-discussion-platform.vercel.app
 
-### **Backend**
-https://multi-user-discussion-platform.onrender.com
 
 ---
 
