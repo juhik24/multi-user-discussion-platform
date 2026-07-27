@@ -1,35 +1,54 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { format } from "timeago.js";
-import { useRef } from "react";
 import API from "../services/api";
 import { getUserIdFromToken } from "../utils/auth";
+
+import {
+  Container,
+  Card,
+  CardContent,
+  CardActions,
+  Typography,
+  Avatar,
+  Stack,
+  Box,
+  Button,
+  Chip,
+  Divider,
+  TextField,
+  IconButton,
+  Menu,
+  MenuItem,
+  CircularProgress,
+} from "@mui/material";
+
+import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
+import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SendIcon from "@mui/icons-material/Send";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 
 export default function PostDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const menuRef = useRef();
 
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [text, setText] = useState("");
-  const [showMenu, setShowMenu] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const openMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const closeMenu = () => {
+    setAnchorEl(null);
+  };
 
   const userId = getUserIdFromToken();
   
-  useEffect(() => {
-  const handleClickOutside = (e) => {
-    if (menuRef.current && !menuRef.current.contains(e.target)) {
-      setShowMenu(false);
-    }
-  };
-
-  document.addEventListener("mousedown", handleClickOutside);
-
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
 
   useEffect(() => {
     API.get(`/posts/${id}`).then(res => setPost(res.data));
@@ -76,108 +95,235 @@ export default function PostDetail() {
   const isUpvoted = post?.upvotes?.includes(userId);
   const isDownvoted = post?.downvotes?.includes(userId);
 
-  if (!post) return <div>Loading...</div>;
+  if (!post)
+  return (
+    <Box
+      display="flex"
+      justifyContent="center"
+      mt={8}
+    >
+      <CircularProgress />
+    </Box>
+  );
 //   console.log("post author:", post.author?._id);
 // console.log("logged user:", userId);
 
   return (
-    <div className="container">
-      <div className="card">
+      <Container
+        maxWidth="md"
+        sx={{
+          py: 5,
+        }}
+      >
+      <Card
+        elevation={4}
+        sx={{
+          borderRadius: 3,
+          overflow: "visible",
+        }}
+      >
+      <CardContent>
 
-        {/* 🔹 Title */}
-        <h2>{post.title}</h2>
+        <Stack
+  direction="row"
+  justifyContent="space-between"
+  alignItems="flex-start"
+>
 
-        {/* 🔹 3-dot menu */}
-        {post.author?._id === userId && (
-          <div className="post-menu" ref={menuRef}>
-            <button
-              className="menu-btn"
-              onClick={() => setShowMenu(prev => !prev)}
-            >
-              ⋮
-            </button>
+  <Stack direction="row" spacing={2}>
 
-            {showMenu && (
-              <div className="menu-dropdown">
-                <div
-                  className="menu-item delete"
-                  onClick={deletePost}
-                >
-                  Delete Post
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+    <Avatar sx={{ bgcolor: "primary.main" }}>
+      {post.author?.name?.charAt(0).toUpperCase()}
+    </Avatar>
 
-        {/* 🔹 Author */}
-        <div className="author-section">
-          <p className="author">By {post.author?.name}</p>
+    <Box>
 
-          <span className="timestamp">
-            {format(post.createdAt)}
-          </span>
-        </div>
+      <Typography
+        variant="h4"
+        fontWeight={700}
+      >
+        {post.title}
+      </Typography>
+
+      <Typography color="text.secondary">
+        By {post.author?.name}
+      </Typography>
+
+      <Typography
+        variant="caption"
+        color="text.secondary"
+      >
+        {format(post.createdAt)}
+      </Typography>
+
+    </Box>
+
+  </Stack>
+
+  {post.author?._id === userId && (
+    <>
+      <IconButton onClick={openMenu}>
+        <MoreVertIcon />
+      </IconButton>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={closeMenu}
+      >
+        <MenuItem
+          onClick={() => {
+            closeMenu();
+            deletePost();
+          }}
+        >
+          <DeleteIcon sx={{ mr: 1 }} />
+          Delete Post
+        </MenuItem>
+      </Menu>
+    </>
+  )}
+
+</Stack>
 
         {/* 🔹 Content */}
-        <p className="content">{post.content}</p>
+        <Box sx={{ mt: 4, mb: 4 }}>
+          {post.content.split("\n").map((line, index) => (
+            <Typography
+              key={index}
+              variant="body1"
+              sx={{
+                mb: line.trim() ? 2 : 0,
+                lineHeight: 1.9,
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+                textAlign: "justify",
+              }}
+            >
+              {line}
+            </Typography>
+          ))}
+        </Box>
 
         {/* 🔹 Votes */}
-        <div className="vote-row">
-          <button
-            className={`vote-btn ${isUpvoted ? "active-up" : ""}`}
+        <CardActions sx={{ px: 0 }}>
+
+          <Button
+            startIcon={<ThumbUpAltOutlinedIcon />}
+            color={isUpvoted ? "success" : "inherit"}
             onClick={() => vote("up")}
           >
-            👍 {post.upvotes?.length || 0}
-          </button>
+            {post.upvotes?.length || 0}
+          </Button>
 
-          <button
-            className={`vote-btn ${isDownvoted ? "active-down" : ""}`}
+          <Button
+            startIcon={<ThumbDownAltOutlinedIcon />}
+            color={isDownvoted ? "error" : "inherit"}
             onClick={() => vote("down")}
           >
-            👎 {post.downvotes?.length || 0}
-          </button>
-        </div>
+            {post.downvotes?.length || 0}
+          </Button>
+
+          <Chip
+            sx={{ ml: "auto" }}
+            icon={<ChatBubbleOutlineIcon />}
+            label={`${comments.length} Comments`}
+          />
+
+        </CardActions>
+
+        <Divider sx={{ my: 3 }} />
 
         {/* 🔹 Comments */}
-        <h3>Comments</h3>
+        <Typography
+          variant="h5"
+          fontWeight={700}
+          mb={3}
+        >
+          Comments
+        </Typography>
 
         {comments.map(c => (
-          <div key={c._id} className="comment-item">
-            <div className="comment-content">
-              <b>{c.author.name}</b>: {c.content}
-            </div>
+          <Card
+  key={c._id}
+  variant="outlined"
+  sx={{
+    mb: 2,
+    borderRadius: 2,
+  }}
+>
+  <CardContent>
+
+    <Stack
+      direction="row"
+      justifyContent="space-between"
+      alignItems="flex-start"
+    >
+
+      <Box>
+
+        <Typography fontWeight={600}>
+          {c.author.name}
+        </Typography>
+
+        <Typography
+          sx={{
+            mt: 1,
+            whiteSpace: "pre-wrap",
+            lineHeight: 1.8,
+            color: "text.secondary",
+          }}
+        >
+          {c.content}
+        </Typography>
+
+      </Box>
 
             {c.author._id === userId && (
-              <button
-                className="delete-btn"
+              <IconButton
+                color="error"
                 onClick={() => deleteComment(c._id)}
               >
-                Delete
-              </button>
+                <DeleteIcon />
+              </IconButton>
             )}
-          </div>
+
+          </Stack>
+
+        </CardContent>
+      </Card>
         ))}
 
         {/* 🔹 Add comment */}
-        <div className="comment-box">
-          <input
-            className="comment-input"
-            placeholder="Write a comment..."
-            value={text}
-            onChange={e => setText(e.target.value)}
-          />
+        <Stack
+        direction="row"
+        spacing={2}
+        mt={4}
+      >
 
-          <button
-            className="comment-btn"
-            onClick={addComment}
-            disabled={!text.trim()}
-          >
-            Post
-          </button>
-        </div>
+        <TextField
+          fullWidth
+          multiline
+          minRows={2}
+          placeholder="Write a comment..."
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
 
-      </div>
-    </div>
+        <Button
+          variant="contained"
+          endIcon={<SendIcon />}
+          disabled={!text.trim()}
+          onClick={addComment}
+        >
+          Post
+        </Button>
+
+      </Stack>
+
+      </CardContent>
+    </Card>
+</Container>
+
   );
 }

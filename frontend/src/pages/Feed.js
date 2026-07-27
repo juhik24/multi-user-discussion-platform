@@ -1,8 +1,30 @@
 import { useEffect, useState } from "react";
-import { format } from "timeago.js";
-import API from "../services/api";
 import { Link } from "react-router-dom";
+import { format } from "timeago.js";
+
+import API from "../services/api";
 import { getUserIdFromToken } from "../utils/auth";
+
+import {
+  Container,
+  Paper,
+  Card,
+  CardContent,
+  CardActions,
+  Typography,
+  Avatar,
+  Stack,
+  Box,
+  Chip,
+  Button,
+  TextField,
+  InputAdornment,
+} from "@mui/material";
+
+import SearchIcon from "@mui/icons-material/Search";
+import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
+import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 export default function Feed() {
   const [posts, setPosts] = useState([]);
@@ -39,83 +61,207 @@ export default function Feed() {
 };
 
   return (
-    <div className="container">
+  <Container maxWidth="md" sx={{ mt: 5, mb: 5 }}>
 
-      {/* 🔍 SEARCH BAR */}
-      <div className="filter-row">
-  <input
-    placeholder="Search posts..."
-    value={search}
-    onChange={e => setSearch(e.target.value)}
-  />
+    <Paper
+      elevation={3}
+      sx={{
+        p: 3,
+        borderRadius: 3,
+        mb: 4,
+      }}
+    >
+      <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
 
-  <input
-    placeholder="Filter by tag..."
-    value={tag}
-    onChange={e => setTag(e.target.value)}
-  />
+        <TextField
+          fullWidth
+          label="Search Discussions"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
 
-  <button onClick={fetchPosts}>Apply</button>
-</div>
+        <TextField
+          fullWidth
+          label="Filter by Tag"
+          value={tag}
+          onChange={(e) => setTag(e.target.value)}
+        />
 
-      {posts.length === 0 && (
-  <div className="empty-state">
-    <h3>No posts found</h3>
-    <p>Try another keyword or create a new post.</p>
-  </div>
-)}
+        <Button
+          variant="contained"
+          size="large"
+          onClick={fetchPosts}
+          sx={{ minWidth: 140 }}
+        >
+          Search
+        </Button>
 
-      {posts.map(post => {
-        const isUpvoted = post.upvotes?.includes(userId);
-        const isDownvoted = post.downvotes?.includes(userId);
+      </Stack>
+    </Paper>
 
-        return (
-          <div className="card modern-card" key={post._id}>
+    {posts.length === 0 && (
+      <Paper
+        sx={{
+          p: 6,
+          textAlign: "center",
+          borderRadius: 3,
+        }}
+      >
+        <Typography variant="h5">
+          No discussions found
+        </Typography>
 
-            <div className="card-header">
-              <h3>{post.title}</h3>
-              <div>
-                <span className="author">By {post.author.name}</span>
+        <Typography color="text.secondary" sx={{ mt: 1 }}>
+          Try another search or create a new discussion.
+        </Typography>
+      </Paper>
+    )}
 
-                <div className="timestamp">
-                  {format(post.createdAt)}
-                </div>
-              </div>
-            </div>
+    {posts.map((post) => {
 
-            <p className="content">{post.content}</p>
+      const isUpvoted = post.upvotes?.includes(userId);
+      const isDownvoted = post.downvotes?.includes(userId);
 
-            {/* 🏷 TAGS */}
-            <div className="tags">
-              {post.tags?.map((t, i) => (
-                <span key={i} className="tag">{t}</span>
+      return (
+
+        <Card
+          key={post._id}
+          elevation={3}
+          sx={{
+            mb: 3,
+            borderRadius: 3,
+            transition: "0.25s",
+            "&:hover": {
+              transform: "translateY(-4px)",
+              boxShadow: 8,
+            },
+          }}
+        >
+
+          <CardContent>
+
+            <Stack
+              direction="row"
+              spacing={2}
+              alignItems="center"
+            >
+
+              <Avatar
+                sx={{
+                  bgcolor: "primary.main",
+                  width: 48,
+                  height: 48,
+                }}
+              >
+                {post.author.name.charAt(0).toUpperCase()}
+              </Avatar>
+
+              <Box flex={1}>
+
+                <Typography
+                  variant="h6"
+                  fontWeight={700}
+                >
+                  {post.title}
+                </Typography>
+
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                >
+                  {post.author.name} • {format(post.createdAt)}
+                </Typography>
+
+              </Box>
+
+            </Stack>
+
+            <Typography
+                variant="body1"
+                sx={{
+                  mt: 3,
+                  mb: 3,
+                  color: "text.secondary",
+                  whiteSpace: "pre-wrap",      // Preserve line breaks
+                  wordBreak: "break-word",     // Prevent long words from overflowing
+                  lineHeight: 1.9,             // Better readability
+                  textAlign: "justify",        // Neat paragraph alignment
+                  fontSize: "1rem",
+                }}
+              >
+                {post.content}
+              </Typography>
+
+            <Stack
+              direction="row"
+              spacing={1}
+              flexWrap="wrap"
+            >
+              {post.tags?.map((tag, i) => (
+                <Chip
+                  key={i}
+                  label={tag}
+                  color="primary"
+                  variant="outlined"
+                  size="small"
+                />
               ))}
-            </div>
+            </Stack>
 
-            {/* 👍 VOTES */}
-            <div className="vote-row">
-              <button
-                className={`vote-btn ${isUpvoted ? "active-up" : ""}`}
+          </CardContent>
+
+          <CardActions
+            sx={{
+              px: 2,
+              pb: 2,
+              justifyContent: "space-between",
+            }}
+          >
+
+            <Stack direction="row" spacing={1}>
+
+              <Button
+                color={isUpvoted ? "success" : "inherit"}
+                startIcon={<ThumbUpAltOutlinedIcon />}
                 onClick={() => vote(post._id, "up")}
               >
-                👍 {post.upvotes?.length || 0}
-              </button>
+                {post.upvotes?.length || 0}
+              </Button>
 
-              <button
-                className={`vote-btn ${isDownvoted ? "active-down" : ""}`}
+              <Button
+                color={isDownvoted ? "error" : "inherit"}
+                startIcon={<ThumbDownAltOutlinedIcon />}
                 onClick={() => vote(post._id, "down")}
               >
-                👎 {post.downvotes?.length || 0}
-              </button>
-            </div>
+                {post.downvotes?.length || 0}
+              </Button>
 
-            <Link className="btn view-btn" to={`/post/${post._id}`}>
-              View Details →
-            </Link>
+            </Stack>
 
-          </div>
-        );
-      })}
-    </div>
-  );
+            <Button
+              component={Link}
+              to={`/post/${post._id}`}
+              endIcon={<ArrowForwardIcon />}
+              variant="contained"
+            >
+              View Discussion
+            </Button>
+
+          </CardActions>
+
+        </Card>
+
+      );
+
+    })}
+
+  </Container>
+);
 }
