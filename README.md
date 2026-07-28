@@ -1,4 +1,4 @@
-# **Multi-User Discussion Platform**
+# **DiscussHub**
 
 ![React](https://img.shields.io/badge/React-Frontend-61DAFB)
 ![Node](https://img.shields.io/badge/NodeJS-Backend-orange)
