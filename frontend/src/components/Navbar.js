@@ -43,7 +43,7 @@ export default function Navbar() {
             letterSpacing: 0.5,
           }}
         >
-          Discussion Hub
+          DiscussHub
         </Typography>
 
         <Box
