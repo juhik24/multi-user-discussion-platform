@@ -13,7 +13,7 @@ Built using **React.js, Node.js, Express.js, MongoDB, and JWT Authentication** w
 # **🚀 Live Demo**
 
 ### **Try it here**
-https://multi-user-discussion-platform.vercel.app
+discusshub-platform.vercel.app
 
 
 ---
